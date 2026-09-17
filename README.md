@@ -1,135 +1,24 @@
-# 📚 Student Study Manager
+# Student Study Manager
 
-> **A simple, console-based Java application designed to help students manage subjects, assignments, and study sessions efficiently.**
+## Overview
+**Student Study Manager** is a Java console-based application built to help college students organize their academic activities. It allows students to manage subjects, keep track of assignment deadlines and completion statuses, log study sessions, and view detailed statistics on their academic progress.
 
----
+## Features
+- **Subject Management**: Add, view, search, and delete subjects (prevents duplicates).
+- **Assignment Management**: Add assignments mapped to specific subjects, view pending vs. completed assignments, and mark assignments as done.
+- **Study Session Management**: Log the date and hours studied for specific subjects.
+- **Statistics**: Generate reports calculating total study hours, subject-wise study hours, and assignment completion ratios.
+- **Persistent Storage**: All data is saved locally to `.txt` files in a `data/` directory, ensuring information survives app restarts.
+- **Validation**: Gracefully handles incorrect inputs using Java exception handling and custom exceptions.
 
-## 🚀 Overview
+## Technologies Used
+- **Java** (JDK 21)
+- **Object-Oriented Programming (OOP)**
+- **Java Collections** (`ArrayList`, `HashMap`, `List`, `Map`)
+- **Exception Handling** (`try-catch`, Custom Exceptions)
+- **File I/O** (`BufferedReader`, `BufferedWriter`, `FileReader`, `FileWriter`)
+- **Java Time API** (`LocalDate`, `DateTimeFormatter`)
 
-**Student Study Manager** is a Java-based console application developed to provide students with a simple way to organize their academic activities.
-
-The application allows students to:
-
-- 📖 Manage their subjects
-- 📝 Track assignments and deadlines
-- ⏱️ Record study sessions
-- 📊 View study statistics
-- 💾 Store and retrieve data using files
-- ⚠️ Handle invalid inputs and application errors safely
-
-The project is designed using core **Object-Oriented Programming (OOP)** concepts along with **Exception Handling**, **Collections**, and **File I/O**.
-
-The main goal is to create a practical academic management system while demonstrating fundamental Java programming concepts in a real-world application.
-
----
-
-## 🎯 Problem Statement
-
-Students often have to manage multiple subjects, assignments, deadlines, and study schedules simultaneously.
-
-Without a proper system, it can become difficult to:
-
-- Keep track of subjects
-- Remember assignment deadlines
-- Monitor completed and pending assignments
-- Record study hours
-- Understand how much time is being spent on each subject
-
-The **Student Study Manager** provides a centralized console-based solution for managing these academic activities.
-
----
-
-## ✨ Features
-
-### 📖 1. Subject Management
-
-Manage all academic subjects from one place.
-
-**Features:**
-- Add a new subject
-- View all subjects
-- Search for a subject
-- Delete a subject
-- Prevent duplicate subject codes
-- Store subject credits
-
-**Subject Information:**
-- Subject Name
-- Subject Code
-- Credits
-
----
-
-### 📝 2. Assignment Management
-
-Keep track of assignments and their completion status.
-
-**Features:**
-- Add assignments
-- View all assignments
-- Search assignments
-- Mark assignments as completed
-- View pending assignments
-- View completed assignments
-- Delete assignments
-- Store assignment deadlines
-
-**Assignment Information:**
-- Assignment ID
-- Assignment Title
-- Subject
-- Deadline
-- Completion Status
-
----
-
-### ⏱️ 3. Study Session Management
-
-Record and monitor study sessions.
-
-**Features:**
-- Add study sessions
-- View study history
-- Record study hours
-- Validate study hours
-- View total study hours
-- Calculate subject-wise study hours
-
-**Study Session Information:**
-- Session ID
-- Subject
-- Date
-- Study Hours
-
----
-
-### 📊 4. Statistics
-
-The application provides useful academic statistics such as:
-
-- Total study hours
-- Subject-wise study hours
-- Total assignments
-- Completed assignments
-- Pending assignments
-- Assignment completion statistics
-
-Statistics are calculated dynamically from the stored data.
-
----
-
-### 💾 5. File-Based Data Storage
-
-The application uses **File I/O** to store data locally.
-
-Data can be maintained using files such as:
-
-```text
-data/
-├── student.txt
-├── subjects.txt
-├── assignments.txt
-└── study_sessions.txt
 ## Project Structure
 ```text
 StudentStudyManager/
