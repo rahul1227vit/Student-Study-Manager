@@ -1,120 +1,255 @@
-package studentstudymanager;
-
-import java.util.Scanner;
+import java.io.*;
+import java.util.*;
 
 public class Main {
 
+    // ---------- Subject Class ----------
+    static class Subject {
+        private String name;
+        private String code;
+        private int credits;
+
+        Subject(String name, String code, int credits) {
+            this.name = name;
+            this.code = code;
+            this.credits = credits;
+        }
+
+        public String getCode() {
+            return code;
+        }
+
+        public String toString() {
+            return name + " (" + code + ") - " + credits + " credits";
+        }
+    }
+
+    // ---------- Assignment Class ----------
+    static class Assignment {
+        private String title;
+        private String subject;
+        private boolean completed;
+
+        Assignment(String title, String subject) {
+            this.title = title;
+            this.subject = subject;
+            this.completed = false;
+        }
+
+        void complete() {
+            completed = true;
+        }
+
+        public String toString() {
+            return title + " | " + subject +
+                    " | " + (completed ? "Completed" : "Pending");
+        }
+    }
+
+    // ---------- Study Session Class ----------
+    static class StudySession {
+        private String subject;
+        private double hours;
+
+        StudySession(String subject, double hours) {
+            this.subject = subject;
+            this.hours = hours;
+        }
+
+        public String toString() {
+            return subject + " - " + hours + " hours";
+        }
+    }
+
+    // ---------- Custom Exception ----------
+    static class InvalidStudyHoursException extends Exception {
+        InvalidStudyHoursException(String message) {
+            super(message);
+        }
+    }
+
+    // ---------- Manager Class ----------
+    static class StudyManager {
+        ArrayList<Subject> subjects = new ArrayList<>();
+        ArrayList<Assignment> assignments = new ArrayList<>();
+        ArrayList<StudySession> sessions = new ArrayList<>();
+
+        void addSubject(String name, String code, int credits) {
+            for (Subject s : subjects) {
+                if (s.getCode().equalsIgnoreCase(code)) {
+                    System.out.println("Subject code already exists!");
+                    return;
+                }
+            }
+
+            subjects.add(new Subject(name, code, credits));
+            System.out.println("Subject added successfully!");
+        }
+
+        void viewSubjects() {
+            System.out.println("\n--- Subjects ---");
+
+            if (subjects.isEmpty()) {
+                System.out.println("No subjects added.");
+                return;
+            }
+
+            for (Subject s : subjects)
+                System.out.println(s);
+        }
+
+        void addAssignment(String title, String subject) {
+            assignments.add(new Assignment(title, subject));
+            System.out.println("Assignment added!");
+        }
+
+        void viewAssignments() {
+            System.out.println("\n--- Assignments ---");
+
+            if (assignments.isEmpty()) {
+                System.out.println("No assignments found.");
+                return;
+            }
+
+            for (int i = 0; i < assignments.size(); i++)
+                System.out.println((i + 1) + ". " + assignments.get(i));
+        }
+
+        void completeAssignment(int index) {
+            if (index < 0 || index >= assignments.size()) {
+                System.out.println("Invalid assignment number.");
+                return;
+            }
+
+            assignments.get(index).complete();
+            System.out.println("Assignment marked as completed!");
+        }
+
+        void addStudySession(String subject, double hours)
+                throws InvalidStudyHoursException {
+
+            if (hours <= 0)
+                throw new InvalidStudyHoursException(
+                        "Study hours must be greater than 0.");
+
+            sessions.add(new StudySession(subject, hours));
+            System.out.println("Study session added!");
+        }
+
+        void viewSessions() {
+            System.out.println("\n--- Study History ---");
+
+            if (sessions.isEmpty()) {
+                System.out.println("No study sessions yet.");
+                return;
+            }
+
+            double total = 0;
+
+            for (StudySession s : sessions) {
+                System.out.println(s);
+            }
+
+            for (StudySession s : sessions)
+                total += s.hours;
+
+            System.out.println("Total Study Hours: " + total);
+        }
+
+        void statistics() {
+            int completed = 0;
+
+            for (Assignment a : assignments) {
+                if (a.completed)
+                    completed++;
+            }
+
+            double totalHours = 0;
+
+            for (StudySession s : sessions)
+                totalHours += s.hours;
+
+            System.out.println("\n--- Study Statistics ---");
+            System.out.println("Total Subjects    : " + subjects.size());
+            System.out.println("Total Assignments : " + assignments.size());
+            System.out.println("Completed         : " + completed);
+            System.out.println("Pending           : " +
+                    (assignments.size() - completed));
+            System.out.println("Study Hours       : " + totalHours);
+        }
+
+        // ---------- File I/O ----------
+        void saveData() {
+            try {
+                BufferedWriter writer =
+                        new BufferedWriter(new FileWriter("study_data.txt"));
+
+                writer.write("SUBJECTS\n");
+
+                for (Subject s : subjects)
+                    writer.write(s + "\n");
+
+                writer.write("\nASSIGNMENTS\n");
+
+                for (Assignment a : assignments)
+                    writer.write(a + "\n");
+
+                writer.write("\nSTUDY SESSIONS\n");
+
+                for (StudySession s : sessions)
+                    writer.write(s + "\n");
+
+                writer.close();
+
+                System.out.println("Data saved successfully!");
+
+            } catch (IOException e) {
+                System.out.println("Error saving data.");
+            }
+        }
+    }
+
+    // ---------- Main Program ----------
     public static void main(String[] args) {
 
         Scanner sc = new Scanner(System.in);
+        StudyManager manager = new StudyManager();
 
-        // Create student
-        System.out.print("Enter student name: ");
-        String name = sc.nextLine();
+        System.out.println("================================");
+        System.out.println("      STUDENT STUDY MANAGER");
+        System.out.println("================================");
 
-        System.out.print("Enter student ID: ");
-        String studentId = sc.nextLine();
+        while (true) {
 
-        Student student = new Student(name, studentId);
-
-        // Create StudyManager
-        StudyManager manager = new StudyManager(student);
-
-        int choice;
-
-        do {
-            System.out.println("\n====================================");
-            System.out.println("       STUDENT STUDY MANAGER");
-            System.out.println("====================================");
-            System.out.println("Student: " + student.getName());
-            System.out.println("ID     : " + student.getStudentId());
-            System.out.println("------------------------------------");
-            System.out.println("1. Subject Management");
-            System.out.println("2. Assignment Management");
-            System.out.println("3. Study Session Management");
-            System.out.println("4. Statistics");
-            System.out.println("5. View Student Details");
-            System.out.println("0. Save & Exit");
-            System.out.println("------------------------------------");
-
-            System.out.print("Enter your choice: ");
-
-            try {
-                choice = Integer.parseInt(sc.nextLine());
-
-                switch (choice) {
-
-                    case 1:
-                        subjectMenu(sc, manager);
-                        break;
-
-                    case 2:
-                        assignmentMenu(sc, manager);
-                        break;
-
-                    case 3:
-                        studySessionMenu(sc, manager);
-                        break;
-
-                    case 4:
-                        statisticsMenu(manager);
-                        break;
-
-                    case 5:
-                        System.out.println("\n--- Student Details ---");
-                        System.out.println("Name: " + student.getName());
-                        System.out.println("ID  : " + student.getStudentId());
-                        break;
-
-                    case 0:
-                        System.out.println("\nSaving data...");
-                        manager.saveAllData();
-                        System.out.println("Data saved successfully.");
-                        System.out.println("Thank you for using Student Study Manager!");
-                        break;
-
-                    default:
-                        System.out.println("Invalid choice! Please enter 0-5.");
-
-                }
-
-            } catch (NumberFormatException e) {
-                System.out.println("Invalid input! Please enter a number.");
-                choice = -1;
-            }
-
-        } while (choice != 0);
-
-        sc.close();
-    }
-
-
-    // ==========================================
-    // SUBJECT MANAGEMENT
-    // ==========================================
-
-    private static void subjectMenu(Scanner sc, StudyManager manager) {
-
-        int choice;
-
-        do {
-            System.out.println("\n========== SUBJECT MANAGEMENT ==========");
+            System.out.println("\nWhat do you want to do?");
             System.out.println("1. Add Subject");
             System.out.println("2. View Subjects");
-            System.out.println("3. Search Subject");
-            System.out.println("4. Delete Subject");
-            System.out.println("0. Back");
-            System.out.println("----------------------------------------");
+            System.out.println("3. Add Assignment");
+            System.out.println("4. View Assignments");
+            System.out.println("5. Complete Assignment");
+            System.out.println("6. Add Study Session");
+            System.out.println("7. View Study History");
+            System.out.println("8. View Statistics");
+            System.out.println("9. Save & Exit");
 
             System.out.print("Enter choice: ");
 
             try {
-                choice = Integer.parseInt(sc.nextLine());
+                int choice = Integer.parseInt(sc.nextLine());
 
                 switch (choice) {
 
                     case 1:
-                        manager.addSubjectFromInput(sc);
+                        System.out.print("Subject name: ");
+                        String name = sc.nextLine();
+
+                        System.out.print("Subject code: ");
+                        String code = sc.nextLine();
+
+                        System.out.print("Credits: ");
+                        int credits = Integer.parseInt(sc.nextLine());
+
+                        manager.addSubject(name, code, credits);
                         break;
 
                     case 2:
@@ -122,180 +257,64 @@ public class Main {
                         break;
 
                     case 3:
-                        manager.searchSubjectFromInput(sc);
+                        System.out.print("Assignment title: ");
+                        String title = sc.nextLine();
+
+                        System.out.print("Subject: ");
+                        String subject = sc.nextLine();
+
+                        manager.addAssignment(title, subject);
                         break;
 
                     case 4:
-                        manager.deleteSubjectFromInput(sc);
-                        break;
-
-                    case 0:
-                        break;
-
-                    default:
-                        System.out.println("Invalid choice!");
-
-                }
-
-            } catch (NumberFormatException e) {
-                System.out.println("Please enter a valid number.");
-                choice = -1;
-            }
-
-        } while (choice != 0);
-    }
-
-
-    // ==========================================
-    // ASSIGNMENT MANAGEMENT
-    // ==========================================
-
-    private static void assignmentMenu(Scanner sc, StudyManager manager) {
-
-        int choice;
-
-        do {
-            System.out.println("\n======== ASSIGNMENT MANAGEMENT ========");
-            System.out.println("1. Add Assignment");
-            System.out.println("2. View All Assignments");
-            System.out.println("3. Search Assignment");
-            System.out.println("4. Mark Assignment Complete");
-            System.out.println("5. View Pending Assignments");
-            System.out.println("6. View Completed Assignments");
-            System.out.println("7. Delete Assignment");
-            System.out.println("0. Back");
-            System.out.println("---------------------------------------");
-
-            System.out.print("Enter choice: ");
-
-            try {
-                choice = Integer.parseInt(sc.nextLine());
-
-                switch (choice) {
-
-                    case 1:
-                        manager.addAssignmentFromInput(sc);
-                        break;
-
-                    case 2:
                         manager.viewAssignments();
                         break;
 
-                    case 3:
-                        manager.searchAssignmentFromInput(sc);
-                        break;
-
-                    case 4:
-                        manager.markAssignmentCompleteFromInput(sc);
-                        break;
-
                     case 5:
-                        manager.viewPendingAssignments();
+                        manager.viewAssignments();
+
+                        if (!manager.assignments.isEmpty()) {
+                            System.out.print("Enter assignment number: ");
+                            int n = Integer.parseInt(sc.nextLine());
+
+                            manager.completeAssignment(n - 1);
+                        }
                         break;
 
                     case 6:
-                        manager.viewCompletedAssignments();
+                        System.out.print("Subject: ");
+                        String sub = sc.nextLine();
+
+                        System.out.print("Study hours: ");
+                        double hours = Double.parseDouble(sc.nextLine());
+
+                        manager.addStudySession(sub, hours);
                         break;
 
                     case 7:
-                        manager.deleteAssignmentFromInput(sc);
+                        manager.viewSessions();
                         break;
 
-                    case 0:
+                    case 8:
+                        manager.statistics();
                         break;
+
+                    case 9:
+                        manager.saveData();
+                        System.out.println("Thanks for using Study Manager!");
+                        sc.close();
+                        return;
 
                     default:
-                        System.out.println("Invalid choice!");
-
+                        System.out.println("Please choose between 1 and 9.");
                 }
 
             } catch (NumberFormatException e) {
                 System.out.println("Please enter a valid number.");
-                choice = -1;
+
+            } catch (InvalidStudyHoursException e) {
+                System.out.println("Error: " + e.getMessage());
             }
-
-        } while (choice != 0);
-    }
-
-
-    // ==========================================
-    // STUDY SESSION MANAGEMENT
-    // ==========================================
-
-    private static void studySessionMenu(
-            Scanner sc,
-            StudyManager manager) {
-
-        int choice;
-
-        do {
-            System.out.println("\n======= STUDY SESSION MANAGEMENT =======");
-            System.out.println("1. Add Study Session");
-            System.out.println("2. View Study History");
-            System.out.println("3. View Total Study Hours");
-            System.out.println("4. View Subject-wise Study Hours");
-            System.out.println("0. Back");
-            System.out.println("----------------------------------------");
-
-            System.out.print("Enter choice: ");
-
-            try {
-                choice = Integer.parseInt(sc.nextLine());
-
-                switch (choice) {
-
-                    case 1:
-                        manager.addStudySessionFromInput(sc);
-                        break;
-
-                    case 2:
-                        manager.viewStudySessions();
-                        break;
-
-                    case 3:
-                        manager.showTotalStudyHours();
-                        break;
-
-                    case 4:
-                        manager.showSubjectWiseStudyHours();
-                        break;
-
-                    case 0:
-                        break;
-
-                    default:
-                        System.out.println("Invalid choice!");
-
-                }
-
-            } catch (NumberFormatException e) {
-                System.out.println("Please enter a valid number.");
-                choice = -1;
-            }
-
-        } while (choice != 0);
-    }
-
-
-    // ==========================================
-    // STATISTICS
-    // ==========================================
-
-    private static void statisticsMenu(StudyManager manager) {
-
-        System.out.println("\n============== STATISTICS ==============");
-
-        manager.showTotalStudyHours();
-
-        System.out.println("-----------------------------------------");
-
-        manager.showSubjectWiseStudyHours();
-
-        System.out.println("-----------------------------------------");
-
-        manager.showAssignmentStatistics();
-
-        System.out.println("=========================================");
+        }
     }
 }
-
