@@ -1,4 +1,3 @@
-```java
 package studentstudymanager;
 
 import java.util.Scanner;
@@ -299,5 +298,4 @@ public class Main {
         System.out.println("=========================================");
     }
 }
-```
 
